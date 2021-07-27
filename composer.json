@@ -1,0 +1,19 @@
+{
+    "name": "thebytelab/vapor-multiregion-deploy",
+    "description": "An artisan command to assist deploying your Laravel Vapor app to multiple AWS regions",
+    "type": "project",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": "^7.2|^8.0",
+        "illuminate/support": "^6.0|^7.0|^8.0",
+        "illuminate/console": "^6.0|^7.0|^8.0",
+        "symfony/yaml": "^4.2|^5.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "TheByteLab\\VaporMultiRegionDeploy\\": "src/"
+        }
+    }
+}
