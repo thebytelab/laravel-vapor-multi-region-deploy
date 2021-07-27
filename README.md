@@ -17,6 +17,7 @@ all of the vapor.yml manifests following a naming pattern similar to the example
 - test.vapor.yml
 - node1.vapor.yml
 
+The steps to getting started:
 1. If you haven't got one already, create a `vapor` directory in your project root.
 2. Move any vapor files to this new folder and rename them to something that makes sense following the pattern above.
 3. Run `php artisan vapor:multi-region:deploy` to deploy your app to multiple Vapor projects or regions.
