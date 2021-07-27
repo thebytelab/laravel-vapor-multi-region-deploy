@@ -1,7 +1,16 @@
 {
     "name": "thebytelab/vapor-multi-region-deploy",
     "description": "An artisan command to assist deploying your Laravel Vapor app to multiple AWS regions",
-    "type": "project",
+    "keywords": [
+        "laravel",
+        "vapor"
+    ],
+    "authors": [
+        {
+            "name": "Josh Stevenson-Woods",
+            "email": "josh@bytelab.solutions"
+        }
+    ],
     "license": "MIT",
     "minimum-stability": "dev",
     "prefer-stable": true,
