@@ -110,7 +110,7 @@ class MultiRegionDeploy extends Command
     protected function makeError(string $error)
     {
         $this->error($error);
-        return 0;
+        return 1;
     }
 
     /**
