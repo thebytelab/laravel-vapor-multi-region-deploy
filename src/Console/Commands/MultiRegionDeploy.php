@@ -16,8 +16,8 @@ class MultiRegionDeploy extends Command
      */
     protected $signature = 'vapor:multi-region:deploy
                             {environment=staging : The environment name to deploy to}
-                            {vapors? : Folder containing the *.vapor.yml files to use}
-                            {--bin=./vendor/bin/vapor : Location of the laravel/vapor-cli executable}
+                            {--vapors= : Folder containing the *.vapor.yml files to use}
+                            {--bin= : Location of the laravel/vapor-cli executable}
                             {--commit= : (laravel/vapor-cli) The commit hash that is being deployed}
                             {--message= : (laravel/vapor-cli) The message for the commit that is being deployed}
                             {--without-waiting=false : (laravel/vapor-cli) Deploy without waiting for progress}
@@ -38,18 +38,25 @@ class MultiRegionDeploy extends Command
     public function handle()
     {
         if (!function_exists('base_path')) {
-            return $this->makeError('Function "base_path" is required by command: vapor:multi-region-deploy');
+            return $this->makeError('Function "base_path" is required, try running "composer install"');
         }
         $path = base_path('vapor');
-        if ($this->hasArgument('vapors')) {
-            $path = $this->argument('vapors');
+        if ($this->hasOption('vapors') && !is_null($this->option('vapors'))) {
+            $path = $this->option('vapors');
         }
         if (!File::exists($path)) {
-            return $this->makeError('Vapors folder doesn\'t exist');
+            return $this->makeError('Folder "vapor" folder does not exist in project root');
         }
         $files = $this->collectVaporFiles($path);
         if ($files->isEmpty()) {
             return $this->makeError('No vapor files found, make sure they end in ".vapor.yml"');
+        }
+        $bin = base_path('vendor/bin/vapor');
+        if ($this->hasOption('bin') && !is_null($this->option('bin'))) {
+            $bin = $this->option('bin');
+        }
+        if (!File::exists($bin)) {
+            return $this->makeError('Vapor executable (--bin) does not exist');
         }
 
         $environment = $this->argument('environment');
@@ -63,7 +70,6 @@ class MultiRegionDeploy extends Command
             }
         }
 
-        // Todo: make sure the location of the 'bin' option exists.
         // Todo: do the deploy for each vapor project.
     }
 
