@@ -5,6 +5,7 @@ namespace TheByteLab\VaporMultiRegionDeploy\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use Symfony\Component\Process\Process;
 use Symfony\Component\Yaml\Yaml;
 
 class MultiRegionDeploy extends Command
@@ -20,8 +21,8 @@ class MultiRegionDeploy extends Command
                             {--bin= : Location of the laravel/vapor-cli executable}
                             {--commit= : (laravel/vapor-cli) The commit hash that is being deployed}
                             {--message= : (laravel/vapor-cli) The message for the commit that is being deployed}
-                            {--without-waiting=false : (laravel/vapor-cli) Deploy without waiting for progress}
-                            {--fresh-assets=false : (laravel/vapor-cli) Upload a fresh copy of all assets}';
+                            {--without-waiting : (laravel/vapor-cli) Deploy without waiting for progress}
+                            {--fresh-assets : (laravel/vapor-cli) Upload a fresh copy of all assets}';
 
     /**
      * The console command description.
@@ -45,7 +46,7 @@ class MultiRegionDeploy extends Command
             $path = $this->option('vapors');
         }
         if (!File::exists($path)) {
-            return $this->makeError('Folder "vapor" folder does not exist in project root');
+            return $this->makeError('Vapors folder does not exist');
         }
         $files = $this->collectVaporFiles($path);
         if ($files->isEmpty()) {
@@ -66,11 +67,38 @@ class MultiRegionDeploy extends Command
         foreach ($files as $vaporFile) {
             $vaporContent = Yaml::parse($vaporFile->getContents());
             if (!isset($vaporContent['environments'][$environment])) {
-                return $this->makeError('"' . $vaporFile->getFilename() . '" does not contain the specified environment');
+                return $this->makeError('"' . $vaporFile->getFilename() . '" does not contain the "' . $environment . '" environment');
             }
         }
 
-        // Todo: do the deploy for each vapor project.
+        $command = [$bin, 'deploy', $environment];
+        if ($this->option('commit')) {
+            $command[] = '--commit=' . $this->option('commit');
+        }
+        if ($this->option('message')) {
+            $command[] = '--message' . $this->option('message');
+        }
+        if ($this->option('without-waiting')) {
+            $command[] = '--without-waiting';
+        }
+        if ($this->option('fresh-assets')) {
+            $command[] = '--fresh-assets';
+        }
+
+        // Run the deployment for each Vapor file, one after the other.
+        foreach ($files as $vaporFile) {
+            $this->info('Starting deployment with manifest: ' . $vaporFile->getFilename());
+            $this->newLine();
+            $process = new Process(array_merge($command, ['--manifest=' . $vaporFile->getPathname()]));
+            $process->run(function ($type, $buffer) {
+                echo $buffer;
+            });
+            $this->newLine();
+
+            if (!$process->isSuccessful()) {
+                $this->error('Deployment unsuccessful with manifest: ' . $vaporFile->getFilename());
+            }
+        }
     }
 
     /**
