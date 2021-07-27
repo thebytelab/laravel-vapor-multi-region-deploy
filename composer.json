@@ -24,5 +24,12 @@
         "psr-4": {
             "TheByteLab\\VaporMultiRegionDeploy\\": "src/"
         }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "TheByteLab\\VaporMultiRegionDeploy\\ServiceProvider"
+            ]
+        }
     }
 }
