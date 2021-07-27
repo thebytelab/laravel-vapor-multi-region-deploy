@@ -1,5 +1,5 @@
 {
-    "name": "thebytelab/vapor-multiregion-deploy",
+    "name": "thebytelab/vapor-multi-region-deploy",
     "description": "An artisan command to assist deploying your Laravel Vapor app to multiple AWS regions",
     "type": "project",
     "license": "MIT",
