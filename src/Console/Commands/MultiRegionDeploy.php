@@ -89,10 +89,13 @@ class MultiRegionDeploy extends Command
         foreach ($files as $vaporFile) {
             $this->info('Starting deployment with manifest: ' . $vaporFile->getFilename());
             $this->newLine();
+
             $process = new Process(array_merge($command, ['--manifest=' . $vaporFile->getPathname()]));
+            $process->setTimeout(null);
             $process->run(function ($type, $buffer) {
                 echo $buffer;
             });
+
             $this->newLine();
 
             if (!$process->isSuccessful()) {
